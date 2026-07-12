@@ -428,6 +428,10 @@ footer{
         <h2>Recente activiteit</h2>
         <p class="panel-note">Laatste wijzigingen en incidenten uit het Kernteam-logboek.</p>
         <div class="log-item">
+          <div class="log-date">12/07/2026 · toegangscheck</div>
+          <div class="log-text"><b>Bevestigd: geen schrijftoegang tot Cloudflare zone-instellingen (Domains/Routes/DNS)</b> en geen deploy-toegang tot de Worker — enkel leestoegang op broncode en worker-lijst, en GitHub-schrijftoegang op dit dashboard zelf. De root-vs-/nl fix moet dus door IT zelf in het Cloudflare-dashboard gebeuren; kan niet door mij worden uitgevoerd zolang deze toegang niet uitgebreid wordt.</div>
+        </div>
+        <div class="log-item">
           <div class="log-date">12/07/2026 · overdracht naar IT-Director</div>
           <div class="log-text"><b>Diagnose-traject afgesloten voor overdracht.</b> Uitgesloten: cache (purge zonder effect, ook met cache-busting) en Workers Routes (leeg, niets geconfigureerd). Bevestigd: bierinckx-shop is gekoppeld via Custom Domain, getoond als "bierinckx.com + 1 other route" op het Workers &amp; Pages-overzicht — die "1 other route" is nog niet geïdentificeerd. Bevestigd via broncode: de huidige worker-code bevat de oude teksten ("Veilig betalen via Stripe" e.d.) niet meer, dus root-content komt niet uit de actuele bierinckx-shop-deploy. Volgende stap voor IT: tabblad Domains van de Worker zelf (niet het account-brede Domains-overzicht) controleren op de exacte binding van de kale root.</div>
         </div>
