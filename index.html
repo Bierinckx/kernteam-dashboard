@@ -387,9 +387,8 @@ footer{
         <p class="panel-note">✅ live + geverifieerd &nbsp;·&nbsp; 🟡 deels / in aanvraag &nbsp;·&nbsp; 🔴 nog niet gebouwd — status per 12/07/2026, handmatige snapshot zolang Fase 1 niet volledig live is.</p>
 
         <div class="status-item"><span class="label">Cloudflare Workers + GitHub Actions CI/CD</span><span class="badge done">✅ live</span></div>
-        <div class="status-item"><span class="label">Site NL/FR/EN/DE + chatwidget met dienst-routing</span><span class="badge done">✅ live</span></div>
-        <div class="status-item"><span class="label">Privacybeleid, voorwaarden, cookiebanner (4 talen)</span><span class="badge partial">🟡 gebouwd, live-test op bierinckx.com nog te bevestigen</span></div>
-        <div class="status-item"><span class="label">Accessoires als volwaardige hoofdcategorie</span><span class="badge partial">🟡 gebouwd, live-test nog te bevestigen</span></div>
+        <div class="status-item"><span class="label">bierinckx.com/nl (en vermoedelijk /fr /en /de): Accessoires, cookiebanner, juridische links, geen Stripe-claims</span><span class="badge done">✅ live-geverifieerd 12/07/2026</span></div>
+        <div class="status-item"><span class="label">bierinckx.com/ (kale root): oude versie — geen Accessoires, geen cookiebanner, geen juridische links, toont nog "Gratis retour 14 dagen" + "Veilig betalen via Stripe"</span><span class="badge todo">🔴 live-geverifieerd 12/07/2026 — regressie, 2x reproduceerbaar</span></div>
         <div class="status-item"><span class="label">Daisycon</span><span class="badge partial">🟡 actief account, wacht op merchant-koppeling</span></div>
         <div class="status-item"><span class="label">Awin</span><span class="badge todo">🔴 nog niet geactiveerd</span></div>
         <div class="status-item"><span class="label">GA4 / Cloudflare Web Analytics (Fase 1)</span><span class="badge todo">🔴 nog niet opgezet</span></div>
@@ -428,6 +427,10 @@ footer{
       <div class="panel">
         <h2>Recente activiteit</h2>
         <p class="panel-note">Laatste wijzigingen en incidenten uit het Kernteam-logboek.</p>
+        <div class="log-item">
+          <div class="log-date">12/07/2026 · live-verificatie via web_fetch</div>
+          <div class="log-text"><b>Incident — root vs /nl divergeren.</b> bierinckx.com/ toont een oudere, niet-compliant versie (geen Accessoires, geen cookiebanner, geen juridische links, nog "Gratis retour 14 dagen" + "Veilig betalen via Stripe" zichtbaar) terwijl bierinckx.com/nl wél de bijgewerkte versie toont. 2x apart opgevraagd, reproduceerbaar. Vermoedelijke oorzaak: caching (Cloudflare edge-cache van de root-route) of een routing-tak die niet meeliep in de laatste deploy. IT-Director: root-route en cache moeten onderzocht worden vóór dit als ✅ mag gelden.</div>
+        </div>
         <div class="log-item">
           <div class="log-date">12/07/2026 · commit f23286e</div>
           <div class="log-text"><b>Accessoires</b> volwaardige 6e hoofdcategorie — eigen hero, 3 subsegmenten, 4 talen. 29 routes render-getest.</div>
