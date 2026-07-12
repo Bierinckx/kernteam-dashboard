@@ -388,7 +388,7 @@ footer{
 
         <div class="status-item"><span class="label">Cloudflare Workers + GitHub Actions CI/CD</span><span class="badge done">✅ live</span></div>
         <div class="status-item"><span class="label">bierinckx.com/nl (en vermoedelijk /fr /en /de): Accessoires, cookiebanner, juridische links, geen Stripe-claims</span><span class="badge done">✅ live-geverifieerd 12/07/2026</span></div>
-        <div class="status-item"><span class="label">bierinckx.com/ (kale root): oude versie — geen Accessoires, geen cookiebanner, geen juridische links, toont nog "Gratis retour 14 dagen" + "Veilig betalen via Stripe"</span><span class="badge todo">🔴 live-geverifieerd 12/07/2026 — regressie, 2x reproduceerbaar</span></div>
+        <div class="status-item"><span class="label">bierinckx.com/ (kale root): nog steeds oude versie na cache-purge — geen Accessoires, geen cookiebanner, geen juridische links, toont nog "Gratis retour 14 dagen" + "Veilig betalen via Stripe"</span><span class="badge todo">🔴 cache uitgesloten - routing/DNS vermoed, onderzoek loopt</span></div>
         <div class="status-item"><span class="label">Daisycon</span><span class="badge partial">🟡 actief account, wacht op merchant-koppeling</span></div>
         <div class="status-item"><span class="label">Awin</span><span class="badge todo">🔴 nog niet geactiveerd</span></div>
         <div class="status-item"><span class="label">GA4 / Cloudflare Web Analytics (Fase 1)</span><span class="badge todo">🔴 nog niet opgezet</span></div>
@@ -427,6 +427,10 @@ footer{
       <div class="panel">
         <h2>Recente activiteit</h2>
         <p class="panel-note">Laatste wijzigingen en incidenten uit het Kernteam-logboek.</p>
+        <div class="log-item">
+          <div class="log-date">12/07/2026 · vervolg-onderzoek</div>
+          <div class="log-text"><b>Cache-purge uitgevoerd door Tom (Cloudflare-dashboard) — loste het niet op.</b> Root bierinckx.com/ toont nog steeds exact dezelfde oude content, ook met een cache-busting query-parameter. Diagnose bijgesteld: caching lijkt uitgesloten. Vermoeden nu: Workers Route of DNS/Page Rule voor de kale root wijst naar een ander origin of een oudere Worker-versie dan bierinckx-shop. IT-Director: check Zone → Workers Routes en DNS/Page Rules voor bierinckx.com/*.</div>
+        </div>
         <div class="log-item">
           <div class="log-date">12/07/2026 · live-verificatie via web_fetch</div>
           <div class="log-text"><b>Incident — root vs /nl divergeren.</b> bierinckx.com/ toont een oudere, niet-compliant versie (geen Accessoires, geen cookiebanner, geen juridische links, nog "Gratis retour 14 dagen" + "Veilig betalen via Stripe" zichtbaar) terwijl bierinckx.com/nl wél de bijgewerkte versie toont. 2x apart opgevraagd, reproduceerbaar. Vermoedelijke oorzaak: caching (Cloudflare edge-cache van de root-route) of een routing-tak die niet meeliep in de laatste deploy. IT-Director: root-route en cache moeten onderzocht worden vóór dit als ✅ mag gelden.</div>
