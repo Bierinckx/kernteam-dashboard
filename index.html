@@ -387,8 +387,7 @@ footer{
         <p class="panel-note">✅ live + geverifieerd &nbsp;·&nbsp; 🟡 deels / in aanvraag &nbsp;·&nbsp; 🔴 nog niet gebouwd — status per 12/07/2026, handmatige snapshot zolang Fase 1 niet volledig live is.</p>
 
         <div class="status-item"><span class="label">Cloudflare Workers + GitHub Actions CI/CD</span><span class="badge done">✅ live</span></div>
-        <div class="status-item"><span class="label">bierinckx.com/nl (en vermoedelijk /fr /en /de): Accessoires, cookiebanner, juridische links, geen Stripe-claims</span><span class="badge done">✅ live-geverifieerd 12/07/2026</span></div>
-        <div class="status-item"><span class="label">bierinckx.com/ (kale root): oude versie — geen Accessoires, geen cookiebanner, geen juridische links, toont nog "Gratis retour 14 dagen" + "Veilig betalen via Stripe"</span><span class="badge todo">🔴 live-geverifieerd 12/07/2026 — regressie, 2x reproduceerbaar</span></div>
+        <div class="status-item"><span class="label">bierinckx.com/ (kale root) én /nl: beide tonen nu de correcte versie — Accessoires, cookiebanner, juridische links, geen Stripe/retour-claims</span><span class="badge done">✅ live-geverifieerd 12/07/2026 — root-issue opgelost</span></div>
         <div class="status-item"><span class="label">Daisycon</span><span class="badge partial">🟡 actief account, wacht op merchant-koppeling</span></div>
         <div class="status-item"><span class="label">Awin</span><span class="badge todo">🔴 nog niet geactiveerd</span></div>
         <div class="status-item"><span class="label">GA4 / Cloudflare Web Analytics (Fase 1)</span><span class="badge todo">🔴 nog niet opgezet</span></div>
@@ -427,6 +426,10 @@ footer{
       <div class="panel">
         <h2>Recente activiteit</h2>
         <p class="panel-note">Laatste wijzigingen en incidenten uit het Kernteam-logboek.</p>
+        <div class="log-item">
+          <div class="log-date">12/07/2026 · opgelost</div>
+          <div class="log-text"><b>Root-vs-/nl issue opgelost.</b> bierinckx.com/ toont nu dezelfde correcte, compliant versie als /nl — geverifieerd via nieuwe live-fetch. Oorzaak niet formeel bevestigd (IT loste het buiten mijn zicht op), maar resultaat is bewezen via directe test. Nieuw aandachtspunt gevonden tijdens dezelfde check: footer vermeldt "Kessel, België" i.p.v. "Westerlo" — nog te bevestigen bij Tom of dit correct is.</div>
+        </div>
         <div class="log-item">
           <div class="log-date">12/07/2026 · toegangscheck</div>
           <div class="log-text"><b>Bevestigd: geen schrijftoegang tot Cloudflare zone-instellingen (Domains/Routes/DNS)</b> en geen deploy-toegang tot de Worker — enkel leestoegang op broncode en worker-lijst, en GitHub-schrijftoegang op dit dashboard zelf. De root-vs-/nl fix moet dus door IT zelf in het Cloudflare-dashboard gebeuren; kan niet door mij worden uitgevoerd zolang deze toegang niet uitgebreid wordt.</div>
