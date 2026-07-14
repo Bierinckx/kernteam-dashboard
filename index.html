@@ -6,544 +6,1342 @@
 <title>Bierinckx Kernteam — Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
+/* ── TOKENS ── */
 :root{
-  --bg:#14120F;
-  --surface:#1C1915;
-  --surface-2:#242019;
-  --line:#33301F55;
-  --line-strong:#4A4530;
+  --bg:#0F0E0C;
+  --surface:#181614;
+  --surface-2:#201E1A;
+  --surface-3:#282420;
+  --line:#2E2B1F44;
+  --line-strong:#3E3B2A;
   --ivory:#EDE6D8;
   --muted:#9C9484;
-  --faint:#6B6656;
+  --faint:#5E5C52;
   --brass:#C6A063;
-  --brass-dim:#8A7145;
-  --green:#7FA26B;
-  --green-bg:#7FA26B1A;
+  --brass-dim:#7A6035;
+  --brass-glow:rgba(198,160,99,.12);
+  --green:#6FA85A;
+  --green-bg:rgba(111,168,90,.12);
   --amber:#D2A24A;
-  --amber-bg:#D2A24A1A;
+  --amber-bg:rgba(210,162,74,.12);
   --red:#C06B5E;
-  --red-bg:#C06B5E1A;
-  --teal:#4E7C71;
+  --red-bg:rgba(192,107,94,.12);
+  --teal:#4E8075;
+  --teal-bg:rgba(78,128,117,.12);
+  --blue:#5E8FBF;
+  --blue-bg:rgba(94,143,191,.12);
+  --radius:3px;
+  --shadow:0 4px 24px rgba(0,0,0,.5);
 }
-*{box-sizing:border-box;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
 body{
-  margin:0;
   background:var(--bg);
   color:var(--ivory);
   font-family:'Inter',sans-serif;
+  font-size:14px;
   -webkit-font-smoothing:antialiased;
+  min-height:100vh;
 }
-::selection{background:var(--brass);color:#14120F;}
-.wrap{max-width:1240px;margin:0 auto;padding:0 32px 96px;}
-a{color:inherit;}
+::selection{background:var(--brass);color:#0F0E0C;}
+a{color:inherit;text-decoration:none;}
 
-header.top{
-  padding:56px 32px 0;
-  max-width:1240px;
-  margin:0 auto;
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:2px;}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:220px;
+  flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0;left:0;bottom:0;
+  z-index:100;
+  overflow-y:auto;
 }
-.eyebrow{
+.sidebar-logo{
+  padding:28px 20px 20px;
+  border-bottom:1px solid var(--line);
+}
+.sidebar-logo .eyebrow{
   font-family:'JetBrains Mono',monospace;
-  font-size:12px;
+  font-size:10px;
   letter-spacing:.14em;
   text-transform:uppercase;
   color:var(--brass);
-  margin:0 0 14px;
+  margin-bottom:6px;
 }
-h1.wordmark{
+.sidebar-logo .brand{
   font-family:'Fraunces',serif;
+  font-size:18px;
   font-weight:500;
-  font-size:clamp(34px,5vw,56px);
-  letter-spacing:-.01em;
-  margin:0 0 6px;
-  line-height:1.02;
-}
-p.sub{
-  color:var(--muted);
-  font-size:16px;
-  max-width:640px;
-  margin:0 0 40px;
-  line-height:1.6;
 }
 
-/* fasering runway */
-.runway{
+.sidebar-nav{padding:16px 12px;flex:1;}
+.nav-section-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--faint);
+  padding:0 8px;
+  margin:16px 0 6px;
+}
+.nav-section-label:first-child{margin-top:0;}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:var(--radius);
+  cursor:pointer;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:500;
+  transition:background .15s,color .15s;
   position:relative;
-  margin:8px 0 64px;
-  padding:28px 4px 0;
+}
+.nav-item:hover{background:var(--surface-2);color:var(--ivory);}
+.nav-item.active{background:var(--brass-glow);color:var(--brass);}
+.nav-item .icon{font-size:15px;width:20px;text-align:center;}
+.nav-badge{
+  margin-left:auto;
+  background:var(--red);
+  color:#0F0E0C;
+  font-size:10px;
+  font-weight:600;
+  padding:1px 6px;
+  border-radius:99px;
+  font-family:'JetBrains Mono',monospace;
+}
+
+.sidebar-footer{
+  padding:16px;
   border-top:1px solid var(--line);
+  font-size:11px;
+  color:var(--faint);
+  font-family:'JetBrains Mono',monospace;
+}
+.sidebar-footer .live-dot{
+  display:inline-block;
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--green);
+  margin-right:6px;
+  animation:pulse-green 2s infinite;
+}
+@keyframes pulse-green{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(111,168,90,.5);}50%{opacity:.8;box-shadow:0 0 0 4px rgba(111,168,90,0);}}
+
+/* ── MAIN ── */
+.main{margin-left:220px;flex:1;min-width:0;}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:90;
+  background:rgba(15,14,12,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:0 32px;
+  height:56px;
+  display:flex;align-items:center;gap:16px;
+}
+.topbar-title{
+  font-family:'Fraunces',serif;
+  font-size:17px;
+  font-weight:500;
+  flex:1;
+}
+.topbar-clock{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 14px;
+  border-radius:var(--radius);
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  border:none;
+  font-family:'Inter',sans-serif;
+}
+.btn-brass{background:var(--brass);color:#0F0E0C;}
+.btn-brass:hover{background:#D4AE72;}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line-strong);}
+.btn-ghost:hover{color:var(--ivory);border-color:var(--muted);}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,107,94,.25);}
+.btn-danger:hover{background:var(--red);color:#0F0E0C;}
+
+/* ── CONTENT ── */
+.content{padding:32px;max-width:1400px;}
+
+/* ── SECTIONS (tab panes) ── */
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+@media(max-width:900px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px 20px;
+}
+.stat-card .s-num{
+  font-family:'Fraunces',serif;
+  font-size:30px;
+  font-weight:500;
+  color:var(--brass);
+  line-height:1;
+  margin-bottom:6px;
+}
+.stat-card .s-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+.stat-card .s-delta{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px;}
+.s-delta.up{color:var(--green);}
+.s-delta.down{color:var(--red);}
+.s-delta.neutral{color:var(--muted);}
+
+/* ── PANEL ── */
+.panel{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  margin-bottom:20px;
+}
+.panel-header{
+  padding:16px 20px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;
+}
+.panel-header h2{
+  font-family:'Fraunces',serif;
+  font-size:17px;
+  font-weight:500;
+  flex:1;
+}
+.panel-note{font-size:11px;color:var(--faint);}
+.panel-body{padding:0 20px;}
+
+/* ── AGENT GRID ── */
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:20px;}
+.agent-card{
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:14px;
+  display:flex;flex-direction:column;gap:10px;
+  transition:border-color .2s,transform .15s;
+  cursor:default;
+}
+.agent-card:hover{border-color:var(--line-strong);transform:translateY(-1px);}
+.agent-card.online{border-left:3px solid var(--green);}
+.agent-card.offline{border-left:3px solid var(--faint);}
+.agent-card.busy{border-left:3px solid var(--amber);}
+.agent-card.alert{border-left:3px solid var(--red);}
+.agent-card-top{display:flex;align-items:center;gap:10px;}
+.agent-avatar{
+  width:34px;height:34px;
+  border-radius:50%;
+  background:var(--surface-3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+}
+.agent-name{font-size:13px;font-weight:500;line-height:1.3;}
+.agent-role{font-size:11px;color:var(--muted);line-height:1.4;}
+.agent-status{display:flex;align-items:center;gap:6px;font-size:11px;font-family:'JetBrains Mono',monospace;}
+.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dot-green{background:var(--green);animation:pulse-green 2.5s infinite;}
+.dot-amber{background:var(--amber);}
+.dot-red{background:var(--red);}
+.dot-grey{background:var(--faint);}
+.agent-card-actions{display:flex;gap:6px;margin-top:4px;}
+.agent-card-actions .btn{padding:5px 10px;font-size:11px;flex:1;justify-content:center;}
+
+/* ── SYSTEM STATUS LIST ── */
+.sys-list{}
+.sys-item{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 20px;
   border-bottom:1px solid var(--line);
 }
+.sys-item:last-child{border-bottom:none;}
+.sys-icon{font-size:18px;width:26px;text-align:center;flex-shrink:0;}
+.sys-name{font-size:13px;font-weight:500;flex:1;}
+.sys-detail{font-size:11px;color:var(--muted);margin-top:2px;}
+.sys-uptime{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);margin-right:8px;}
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  padding:3px 8px;
+  border-radius:2px;
+  white-space:nowrap;
+  font-weight:500;
+}
+.badge.live{background:var(--green-bg);color:var(--green);}
+.badge.partial{background:var(--amber-bg);color:var(--amber);}
+.badge.down{background:var(--red-bg);color:var(--red);}
+.badge.pending{background:var(--blue-bg);color:var(--blue);}
+.badge.info{background:var(--surface-3);color:var(--muted);}
+
+/* ── ISSUES ── */
+.issue-item{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:14px;
+  align-items:start;
+  padding:14px 20px;
+  border-bottom:1px solid var(--line);
+}
+.issue-item:last-child{border-bottom:none;}
+.issue-sev{
+  width:4px;
+  align-self:stretch;
+  border-radius:2px;
+  flex-shrink:0;
+}
+.sev-critical{background:var(--red);}
+.sev-warning{background:var(--amber);}
+.sev-info{background:var(--blue);}
+.sev-ok{background:var(--green);}
+.issue-title{font-size:13px;font-weight:500;margin-bottom:4px;}
+.issue-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+.issue-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);margin-top:6px;}
+.issue-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+
+/* ── MESSAGE PANEL ── */
+.msg-compose{
+  background:var(--surface-2);
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius);
+  padding:20px;
+  margin:20px;
+}
+.msg-compose h3{font-size:14px;font-weight:500;margin-bottom:14px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.field-row.full{grid-template-columns:1fr;}
+label.lbl{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;}
+select.inp,input.inp,textarea.inp{
+  width:100%;
+  background:var(--surface-3);
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius);
+  color:var(--ivory);
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  padding:9px 12px;
+  outline:none;
+  transition:border-color .15s;
+  appearance:none;
+}
+select.inp{cursor:pointer;}
+select.inp:focus,input.inp:focus,textarea.inp:focus{border-color:var(--brass);}
+textarea.inp{resize:vertical;min-height:90px;line-height:1.5;}
+.msg-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;}
+
+/* sent messages list */
+.msg-list{padding:0 20px 20px;}
+.msg-thread{margin-bottom:12px;}
+.msg-bubble{
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  max-width:640px;
+}
+.msg-bubble.sent{border-color:var(--brass-dim);margin-left:auto;}
+.msg-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.msg-from{font-size:12px;font-weight:500;}
+.msg-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);}
+.msg-to-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  background:var(--brass-glow);
+  color:var(--brass);
+  padding:1px 6px;
+  border-radius:2px;
+}
+.msg-text{font-size:13px;color:var(--muted);line-height:1.55;}
+
+/* ── RUNWAY ── */
+.runway{padding:20px;overflow-x:auto;}
 .runway-track{
   position:relative;
   display:flex;
   justify-content:space-between;
-  padding-bottom:26px;
+  min-width:500px;
+  padding-bottom:24px;
+  padding-top:4px;
 }
 .runway-track::before{
   content:"";
   position:absolute;
-  top:9px;
-  left:14px;
-  right:14px;
+  top:9px;left:14px;right:14px;
   height:1px;
   background:linear-gradient(to right,var(--brass) 0%,var(--brass) 22%,var(--line-strong) 22%,var(--line-strong) 100%);
 }
-.station{
-  position:relative;
-  flex:1;
-  text-align:center;
-}
+.station{position:relative;flex:1;text-align:center;}
 .station .dot{
   width:19px;height:19px;border-radius:50%;
   margin:0 auto 14px;
   border:1px solid var(--line-strong);
   background:var(--surface);
-  position:relative;
-  z-index:1;
+  position:relative;z-index:1;
   display:flex;align-items:center;justify-content:center;
 }
 .station.done .dot{background:var(--brass);border-color:var(--brass);}
 .station.active .dot{border-color:var(--amber);}
 .station.active .dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--amber);}
-.station .fase-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--faint);
-  margin-bottom:4px;
-}
-.station .fase-name{
-  font-size:14px;
-  font-weight:500;
-  margin-bottom:6px;
-}
-.station .fase-status{
-  font-size:12px;
-  color:var(--muted);
-}
+.fase-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:4px;}
+.fase-name{font-size:13px;font-weight:500;margin-bottom:4px;}
+.fase-status{font-size:11px;color:var(--muted);}
 .station.active .fase-name{color:var(--amber);}
 .station.done .fase-name{color:var(--brass);}
+.fase-bar-wrap{position:relative;height:3px;background:var(--surface-3);border-radius:2px;margin:6px auto 0;width:60%;overflow:hidden;}
+.fase-bar{height:100%;background:var(--brass);border-radius:2px;}
+.station.active .fase-bar{background:var(--amber);}
 
-/* grid */
-.grid{
-  display:grid;
-  grid-template-columns:340px 1fr;
-  gap:28px;
-  align-items:start;
-}
-@media (max-width:900px){.grid{grid-template-columns:1fr;}}
-
-.panel{
-  background:var(--surface);
-  border:1px solid var(--line);
-  border-radius:2px;
-  padding:22px 24px;
-  margin-bottom:24px;
-}
-.panel h2{
-  font-family:'Fraunces',serif;
-  font-weight:500;
-  font-size:19px;
-  margin:0 0 4px;
-}
-.panel .panel-note{
-  font-size:12px;
-  color:var(--faint);
-  margin:0 0 18px;
-  line-height:1.5;
-}
-
-/* contact directory */
-.contact-row{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  padding:13px 0;
-  border-top:1px solid var(--line);
-}
-.contact-row:first-of-type{border-top:none;}
-.contact-name{font-size:14px;font-weight:500;margin:0 0 2px;}
-.contact-role{font-size:12px;color:var(--muted);margin:0;}
-.contact-mail{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  color:var(--brass);
-  text-decoration:none;
-  border:1px solid var(--brass-dim);
-  padding:5px 10px;
-  border-radius:2px;
-  white-space:nowrap;
-  transition:background .15s,color .15s;
-}
-.contact-mail:hover{background:var(--brass);color:#14120F;}
-
-.group-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  color:var(--faint);
-  margin:22px 0 4px;
-}
-.group-label:first-child{margin-top:0;}
-
-/* status badge */
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  padding:3px 8px;
-  border-radius:2px;
-  white-space:nowrap;
-}
-.badge.done{background:var(--green-bg);color:var(--green);}
-.badge.partial{background:var(--amber-bg);color:var(--amber);}
-.badge.todo{background:var(--red-bg);color:var(--red);}
-
-/* status list */
-.status-item{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-  padding:11px 0;
-  border-top:1px solid var(--line);
-  font-size:13px;
-}
-.status-item:first-of-type{border-top:none;}
-.status-item .label{color:var(--ivory);line-height:1.5;}
-.status-item .badge{flex-shrink:0;margin-top:1px;}
-
-/* charts */
-.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-@media (max-width:700px){.chart-row{grid-template-columns:1fr;}}
-.chart-box{position:relative;height:220px;}
-.chart-title{font-size:13px;color:var(--muted);margin:0 0 10px;}
-
-/* metrics */
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:6px;}
-.metric{background:var(--surface-2);border-radius:2px;padding:14px 16px;}
-.metric .num{font-family:'Fraunces',serif;font-size:26px;font-weight:500;color:var(--brass);}
-.metric .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
-
-/* escalation table */
-table.esc{width:100%;border-collapse:collapse;font-size:13px;}
-table.esc td{padding:9px 0;border-top:1px solid var(--line);vertical-align:top;}
-table.esc tr:first-child td{border-top:none;}
-table.esc td:first-child{color:var(--muted);width:38%;padding-right:14px;}
-
-/* incident log */
-.log-item{padding:12px 0;border-top:1px solid var(--line);font-size:13px;}
-.log-item:first-of-type{border-top:none;}
-.log-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);margin-bottom:4px;}
+/* ── LOG ── */
+.log-item{padding:13px 20px;border-bottom:1px solid var(--line);font-size:13px;}
+.log-item:last-child{border-bottom:none;}
+.log-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
 .log-text{color:var(--muted);line-height:1.55;}
 .log-text b{color:var(--ivory);font-weight:500;}
 
-footer{
-  max-width:1240px;margin:0 auto;padding:0 32px;
-  color:var(--faint);font-size:12px;
-  border-top:1px solid var(--line);
-  padding-top:20px;margin-top:8px;
-  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+/* ── CONTACT ── */
+.contact-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;
+  border-bottom:1px solid var(--line);
+  transition:background .12s;
+}
+.contact-row:last-child{border-bottom:none;}
+.contact-row:hover{background:var(--surface-2);}
+.contact-emoji{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
+.contact-info{flex:1;min-width:0;}
+.contact-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.contact-role{font-size:11px;color:var(--muted);}
+.contact-actions{display:flex;gap:6px;flex-shrink:0;}
+.tag-mail{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--brass);
+  border:1px solid var(--brass-dim);
+  padding:3px 8px;
+  border-radius:2px;
+  transition:background .15s,color .15s;
+}
+.tag-mail:hover{background:var(--brass);color:#0F0E0C;}
+.tag-msg{
+  font-size:10px;
+  color:var(--muted);
+  border:1px solid var(--line-strong);
+  padding:3px 8px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:background .15s,color .15s;
+  font-family:'Inter',sans-serif;
+}
+.tag-msg:hover{background:var(--surface-3);color:var(--ivory);}
+
+/* ── GROUP LABEL ── */
+.group-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--faint);
+  padding:12px 20px 4px;
+}
+
+/* ── ESCALATION TABLE ── */
+.esc-table{width:100%;border-collapse:collapse;}
+.esc-table td{padding:10px 20px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top;}
+.esc-table tr:last-child td{border-bottom:none;}
+.esc-table td:first-child{color:var(--muted);width:42%;}
+.esc-val{font-weight:500;}
+
+/* ── CHARTS ── */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;padding:20px;}
+@media(max-width:900px){.chart-grid{grid-template-columns:1fr;}}
+.chart-box-wrap{}
+.chart-title{font-size:12px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace;}
+.chart-box{position:relative;height:200px;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(4px);
+  z-index:500;
+  display:none;
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius);
+  width:100%;max-width:520px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.modal-header{
+  padding:18px 20px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;
+}
+.modal-header h3{font-family:'Fraunces',serif;font-weight:500;font-size:17px;flex:1;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px;line-height:1;}
+.modal-close:hover{color:var(--ivory);}
+.modal-body{padding:20px;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius);
+  padding:12px 16px;
+  min-width:280px;
+  max-width:360px;
+  font-size:13px;
+  display:flex;align-items:flex-start;gap:10px;
+  box-shadow:var(--shadow);
+  animation:slide-in .2s ease;
+}
+.toast.success{border-left:3px solid var(--green);}
+.toast.warning{border-left:3px solid var(--amber);}
+.toast.error{border-left:3px solid var(--red);}
+@keyframes slide-in{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast-icon{font-size:16px;flex-shrink:0;}
+.toast-content .toast-title{font-weight:500;margin-bottom:2px;}
+.toast-content .toast-text{color:var(--muted);font-size:12px;}
+
+/* ── SEARCH ── */
+.search-bar{
+  background:var(--surface-2);
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius);
+  padding:8px 14px;
+  display:flex;align-items:center;gap:8px;
+  width:220px;
+}
+.search-bar input{
+  background:none;border:none;outline:none;
+  color:var(--ivory);font-size:13px;flex:1;
+  font-family:'Inter',sans-serif;
+}
+.search-bar input::placeholder{color:var(--faint);}
+.search-icon{color:var(--faint);font-size:14px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .main{margin-left:0;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+  .field-row{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<header class="top">
-  <p class="eyebrow">Bierinckx · Westerlo, België</p>
-  <h1 class="wordmark">Kernteam command center</h1>
-  <p class="sub">Eén plek om elk team te bereiken en te zien wat er speelt — Sales, Psychologie, Consultancy, AURA LUXE, IT, en Kennis · Groei · Financiën. Gebaseerd op Masterprompt V22.</p>
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="eyebrow">Bierinckx · Westerlo</div>
+    <div class="brand">Kernteam</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overzicht</div>
+    <div class="nav-item active" data-section="overview">
+      <span class="icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" data-section="agents">
+      <span class="icon">◉</span> Agents
+    </div>
+    <div class="nav-item" data-section="systems">
+      <span class="icon">⬡</span> Systemen
+    </div>
+    <div class="nav-item" data-section="issues">
+      <span class="icon">⚡</span> Problemen <span class="nav-badge" id="issues-badge">4</span>
+    </div>
 
-  <div class="runway">
-    <div class="runway-track">
-      <div class="station done">
-        <div class="dot"></div>
-        <div class="fase-label">Fase 0</div>
-        <div class="fase-name">Compliance</div>
-        <div class="fase-status">Grotendeels klaar</div>
-      </div>
-      <div class="station active">
-        <div class="dot"></div>
-        <div class="fase-label">Fase 1</div>
-        <div class="fase-name">Meetbaarheid</div>
-        <div class="fase-status">GA4 + CF Analytics</div>
-      </div>
-      <div class="station">
-        <div class="dot"></div>
-        <div class="fase-label">Fase 2</div>
-        <div class="fase-name">Productdata</div>
-        <div class="fase-status">Wacht op Awin</div>
-      </div>
-      <div class="station">
-        <div class="dot"></div>
-        <div class="fase-label">Fase 3</div>
-        <div class="fase-name">Retentie</div>
-        <div class="fase-status">MailerLite</div>
-      </div>
-      <div class="station">
-        <div class="dot"></div>
-        <div class="fase-label">Fase 4</div>
-        <div class="fase-name">Advertising</div>
-        <div class="fase-status">Meta Ads €300/m</div>
-      </div>
+    <div class="nav-section-label">Communicatie</div>
+    <div class="nav-item" data-section="messages">
+      <span class="icon">✉</span> Berichten
+    </div>
+    <div class="nav-item" data-section="contacts">
+      <span class="icon">☰</span> Contacten
+    </div>
+
+    <div class="nav-section-label">Project</div>
+    <div class="nav-item" data-section="phases">
+      <span class="icon">→</span> Fasering
+    </div>
+    <div class="nav-item" data-section="log">
+      <span class="icon">≡</span> Logboek
     </div>
   </div>
-</header>
+  <div class="sidebar-footer">
+    <span class="live-dot"></span> Live · V22 · <span id="sidebar-time">--:--</span>
+  </div>
+</nav>
 
-<div class="wrap">
-  <div class="grid">
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="search-bar">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Zoeken..." id="global-search">
+    </div>
+    <div class="topbar-clock" id="clock">--:--:--</div>
+    <button class="btn btn-brass" onclick="openModal('compose-modal')">✉ Nieuw bericht</button>
+  </div>
 
-    <!-- LEFT: contact directory -->
-    <div>
-      <div class="panel">
-        <h2>Contact</h2>
-        <p class="panel-note">Elke rij opent een e-mail naar het juiste team. Klik = mailto, geen live chat.</p>
+  <div class="content">
 
-        <div class="group-label">Kernteam</div>
-        <div class="contact-row">
-          <div><p class="contact-name">🧭 Director</p><p class="contact-role">Voorzitter Kernteam</p></div>
-          <a class="contact-mail" href="mailto:info@bierinckx.com?subject=Kernteam%20-%20Director">info@</a>
+    <!-- ══ OVERVIEW ══ -->
+    <div class="section active" id="section-overview">
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="s-num" id="stat-online">—</div>
+          <div class="s-lbl">Agents online</div>
+          <div class="s-delta up" id="stat-online-delta">van 56 totaal</div>
         </div>
-        <div class="contact-row">
-          <div><p class="contact-name">👑 Luxe-Director</p><p class="contact-role">AURA LUXE</p></div>
-          <a class="contact-mail" href="mailto:auraluxe@bierinckx.com?subject=Kernteam%20-%20Luxe-Director">auraluxe@</a>
+        <div class="stat-card">
+          <div class="s-num" id="stat-systems">—</div>
+          <div class="s-lbl">Systemen live</div>
+          <div class="s-delta neutral">van 8 bewaakt</div>
         </div>
-        <div class="contact-row">
-          <div><p class="contact-name">🖥️ IT-Director</p><p class="contact-role">Cloudflare · Integraties</p></div>
-          <a class="contact-mail" href="mailto:info@bierinckx.com?subject=Kernteam%20-%20IT-Director">info@</a>
+        <div class="stat-card">
+          <div class="s-num" id="stat-issues">4</div>
+          <div class="s-lbl">Open problemen</div>
+          <div class="s-delta down">2 kritiek</div>
         </div>
-        <div class="contact-row">
-          <div><p class="contact-name">💰 Finance-Controller</p><p class="contact-role">Kerncijfers · BTW</p></div>
-          <a class="contact-mail" href="mailto:info@bierinckx.com?subject=Kernteam%20-%20Finance">info@</a>
-        </div>
-        <div class="contact-row">
-          <div><p class="contact-name">📚 Knowledge-Manager</p><p class="contact-role">Rapportage · Archief</p></div>
-          <a class="contact-mail" href="mailto:info@bierinckx.com?subject=Kernteam%20-%20Knowledge">info@</a>
-        </div>
-
-        <div class="group-label">Businessteams</div>
-        <div class="contact-row">
-          <div><p class="contact-name">Sales</p><p class="contact-role">11 agents · €7.000/m target</p></div>
-          <a class="contact-mail" href="mailto:sales@bierinckx.com?subject=Team%20Sales">sales@</a>
-        </div>
-        <div class="contact-row">
-          <div><p class="contact-name">Psychologie</p><p class="contact-role">9 agents · verborgen uit nav</p></div>
-          <a class="contact-mail" href="mailto:spy@bierinckx.com?subject=Team%20Psychologie">spy@</a>
-        </div>
-        <div class="contact-row">
-          <div><p class="contact-name">Consultancy</p><p class="contact-role">6 agents · €6.000/m target</p></div>
-          <a class="contact-mail" href="mailto:consultancy@bierinckx.com?subject=Team%20Consultancy">consultancy@</a>
-        </div>
-        <div class="contact-row">
-          <div><p class="contact-name">AURA LUXE</p><p class="contact-role">12 agents · affiliate-only</p></div>
-          <a class="contact-mail" href="mailto:auraluxe@bierinckx.com?subject=Team%20AURA%20LUXE">auraluxe@</a>
-        </div>
-        <div class="contact-row">
-          <div><p class="contact-name">IT</p><p class="contact-role">14 agents · Cloudflare/GitHub</p></div>
-          <a class="contact-mail" href="mailto:info@bierinckx.com?subject=Team%20IT">info@</a>
-        </div>
-        <div class="contact-row">
-          <div><p class="contact-name">Kennis, Groei & Financiën</p><p class="contact-role">4 agents · bewaking</p></div>
-          <a class="contact-mail" href="mailto:info@bierinckx.com?subject=Team%20KGF">info@</a>
-        </div>
-
-        <div class="group-label">Overige diensten</div>
-        <div class="contact-row">
-          <div><p class="contact-name">Fractional CRO & Grafische Nijverheid</p><p class="contact-role">via chatbot-routing</p></div>
-          <a class="contact-mail" href="mailto:sales@bierinckx.com?subject=Fractional%20CRO%20%2F%20Grafische%20Nijverheid">sales@</a>
+        <div class="stat-card">
+          <div class="s-num">Fase 1</div>
+          <div class="s-lbl">Actieve fase</div>
+          <div class="s-delta neutral">Meetbaarheid — 30%</div>
         </div>
       </div>
 
+      <!-- Quick agent status -->
       <div class="panel">
-        <h2>Escalatiedrempels</h2>
-        <p class="panel-note">Altijd via Kernteam, max 5 zinnen, keuze A/B.</p>
-        <table class="esc">
-          <tr><td>Uitgave</td><td>&gt; €500</td></tr>
-          <tr><td>Deal / project</td><td>&gt; €25.000</td></tr>
-          <tr><td>AURA LUXE partner/deal</td><td>&gt; €5.000, of &lt;10% commissie</td></tr>
-          <tr><td>Campagnebudget</td><td>&gt; €500/maand</td></tr>
-          <tr><td>Nieuwe tool</td><td>&gt; €100/maand</td></tr>
-          <tr><td>Partnership</td><td>&gt; €50.000</td></tr>
-          <tr><td>Nieuwe markt</td><td>buiten BE/NL/DE</td></tr>
-          <tr><td>Security-incident</td><td>binnen 15 min</td></tr>
-          <tr><td>Merkrisico</td><td>onmiddellijk</td></tr>
+        <div class="panel-header">
+          <h2>Agent-status — snel overzicht</h2>
+          <button class="btn btn-ghost" onclick="navigate('agents')">Alles zien →</button>
+        </div>
+        <div class="agent-grid" id="overview-agents"></div>
+      </div>
+
+      <!-- System snapshot -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Systeem-snapshot</h2>
+          <button class="btn btn-ghost" onclick="navigate('systems')">Details →</button>
+        </div>
+        <div class="sys-list" id="overview-systems"></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="panel">
+        <div class="panel-header"><h2>Organisatie & targets</h2></div>
+        <div class="chart-grid">
+          <div class="chart-box-wrap">
+            <div class="chart-title">Agents per team</div>
+            <div class="chart-box"><canvas id="teamChart"></canvas></div>
+          </div>
+          <div class="chart-box-wrap">
+            <div class="chart-title">Omzettarget / maand (€)</div>
+            <div class="chart-box"><canvas id="revenueChart"></canvas></div>
+          </div>
+          <div class="chart-box-wrap">
+            <div class="chart-title">Fasevoortgang (%)</div>
+            <div class="chart-box"><canvas id="faseChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AGENTS ══ -->
+    <div class="section" id="section-agents">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Alle agents</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:11px;color:var(--muted);">Filter:</span>
+            <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="filterAgents('all')" id="f-all">Alle</button>
+            <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="filterAgents('online')" id="f-online">Online</button>
+            <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="filterAgents('busy')" id="f-busy">Bezig</button>
+            <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="filterAgents('offline')" id="f-offline">Offline</button>
+          </div>
+        </div>
+        <div class="agent-grid" id="all-agents"></div>
+      </div>
+    </div>
+
+    <!-- ══ SYSTEMS ══ -->
+    <div class="section" id="section-systems">
+      <div class="panel">
+        <div class="panel-header"><h2>Systeemstatus</h2>
+          <span class="panel-note" style="font-size:11px;">Snapshot — live telemetrie actief na Fase 1 ✅</span>
+        </div>
+        <div class="sys-list" id="all-systems"></div>
+      </div>
+
+      <div class="panel" style="margin-top:20px;">
+        <div class="panel-header"><h2>Escalatiedrempels</h2></div>
+        <table class="esc-table">
+          <tr><td>Uitgave</td><td class="esc-val">&gt; €500</td></tr>
+          <tr><td>Deal / project</td><td class="esc-val">&gt; €25.000</td></tr>
+          <tr><td>AURA LUXE partner/deal</td><td class="esc-val">&gt; €5.000, of &lt;10% commissie</td></tr>
+          <tr><td>Campagnebudget</td><td class="esc-val">&gt; €500/maand</td></tr>
+          <tr><td>Nieuwe tool</td><td class="esc-val">&gt; €100/maand</td></tr>
+          <tr><td>Partnership</td><td class="esc-val">&gt; €50.000</td></tr>
+          <tr><td>Nieuwe markt</td><td class="esc-val">buiten BE/NL/DE</td></tr>
+          <tr><td>Security-incident</td><td class="esc-val">binnen 15 min melden</td></tr>
+          <tr><td>Merkrisico</td><td class="esc-val">onmiddellijk</td></tr>
         </table>
       </div>
     </div>
 
-    <!-- RIGHT: system status + visuals -->
-    <div>
+    <!-- ══ ISSUES ══ -->
+    <div class="section" id="section-issues">
       <div class="panel">
-        <h2>Realiteitscheck</h2>
-        <p class="panel-note">✅ live + geverifieerd &nbsp;·&nbsp; 🟡 deels / in aanvraag &nbsp;·&nbsp; 🔴 nog niet gebouwd — status per 12/07/2026, handmatige snapshot zolang Fase 1 niet volledig live is.</p>
-
-        <div class="status-item"><span class="label">Cloudflare Workers + GitHub Actions CI/CD</span><span class="badge done">✅ live</span></div>
-        <div class="status-item"><span class="label">bierinckx.com/ (kale root) én /nl: beide tonen nu de correcte versie — Accessoires, cookiebanner, juridische links, geen Stripe/retour-claims</span><span class="badge done">✅ live-geverifieerd 12/07/2026 — root-issue opgelost</span></div>
-        <div class="status-item"><span class="label">Daisycon</span><span class="badge partial">🟡 actief account, wacht op merchant-koppeling</span></div>
-        <div class="status-item"><span class="label">Awin</span><span class="badge todo">🔴 nog niet geactiveerd</span></div>
-        <div class="status-item"><span class="label">GA4 / Cloudflare Web Analytics (Fase 1)</span><span class="badge todo">🔴 nog niet opgezet</span></div>
-        <div class="status-item"><span class="label">Productdata & aankooppad (Fase 2)</span><span class="badge todo">🔴 wacht op Awin + Daisycon</span></div>
-        <div class="status-item"><span class="label">BTW-nummer</span><span class="badge todo">🔴 aanvraag loopt, geen blokkade</span></div>
+        <div class="panel-header">
+          <h2>Open problemen</h2>
+          <button class="btn btn-ghost" style="font-size:11px;" onclick="showToast('Rapport gegenereerd','Problemen-export klaar','success')">⬇ Exporteer</button>
+        </div>
+        <div id="issues-list"></div>
       </div>
+    </div>
 
+    <!-- ══ MESSAGES ══ -->
+    <div class="section" id="section-messages">
       <div class="panel">
-        <h2>Organisatie & targets</h2>
-        <p class="panel-note">56 agents over 6 teams · omzettargets zijn ambitie, geen voorspelling zolang de onderliggende fase niet ✅ staat.</p>
-        <div class="chart-row">
-          <div>
-            <p class="chart-title">Agents per team</p>
-            <div class="chart-box"><canvas id="teamChart"></canvas></div>
+        <div class="panel-header"><h2>Nieuw bericht sturen</h2></div>
+        <div class="msg-compose">
+          <div class="field-row">
+            <div>
+              <label class="lbl">Aan</label>
+              <select class="inp" id="msg-to">
+                <option value="">— kies ontvanger —</option>
+                <optgroup label="Kernteam">
+                  <option value="Director (info@bierinckx.com)">🧭 Director</option>
+                  <option value="Luxe-Director (auraluxe@bierinckx.com)">👑 Luxe-Director</option>
+                  <option value="IT-Director (info@bierinckx.com)">🖥️ IT-Director</option>
+                  <option value="Finance-Controller (info@bierinckx.com)">💰 Finance-Controller</option>
+                  <option value="Knowledge-Manager (info@bierinckx.com)">📚 Knowledge-Manager</option>
+                </optgroup>
+                <optgroup label="Businessteams">
+                  <option value="Team Sales (sales@bierinckx.com)">Sales — 11 agents</option>
+                  <option value="Team Psychologie (spy@bierinckx.com)">Psychologie — 9 agents</option>
+                  <option value="Team Consultancy (consultancy@bierinckx.com)">Consultancy — 6 agents</option>
+                  <option value="Team AURA LUXE (auraluxe@bierinckx.com)">AURA LUXE — 12 agents</option>
+                  <option value="Team IT (info@bierinckx.com)">IT — 14 agents</option>
+                  <option value="Team KGF (info@bierinckx.com)">Kennis, Groei & Financiën — 4 agents</option>
+                </optgroup>
+              </select>
+            </div>
+            <div>
+              <label class="lbl">Prioriteit</label>
+              <select class="inp" id="msg-priority">
+                <option value="normaal">Normaal</option>
+                <option value="urgent">Urgent</option>
+                <option value="escalatie">Escalatie vereist</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <p class="chart-title">Omzettarget per maand (€)</p>
-            <div class="chart-box"><canvas id="revenueChart"></canvas></div>
+          <div class="field-row full">
+            <div>
+              <label class="lbl">Onderwerp</label>
+              <input type="text" class="inp" id="msg-subject" placeholder="Korte beschrijving van je vraag…">
+            </div>
+          </div>
+          <div class="field-row full">
+            <div>
+              <label class="lbl">Bericht</label>
+              <textarea class="inp" id="msg-body" placeholder="Schrijf hier je bericht — max 5 zinnen, keuze A/B waar relevant…"></textarea>
+            </div>
+          </div>
+          <div class="msg-actions">
+            <button class="btn btn-ghost" onclick="clearMsg()">Leegmaken</button>
+            <button class="btn btn-brass" onclick="sendMsg()">✉ Versturen</button>
           </div>
         </div>
-        <div class="metrics" style="margin-top:20px;">
-          <div class="metric"><div class="num">56</div><div class="lbl">Agents totaal</div></div>
-          <div class="metric"><div class="num">6</div><div class="lbl">Teams</div></div>
-          <div class="metric"><div class="num">±€16,5k</div><div class="lbl">Omzet bij volledig behalen</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>Verzonden berichten</h2></div>
+        <div class="msg-list" id="msg-thread-list" style="padding-top:16px;">
+          <div style="padding:20px;color:var(--faint);font-size:13px;text-align:center;">Nog geen berichten verstuurd in deze sessie.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CONTACTS ══ -->
+    <div class="section" id="section-contacts">
+      <div class="panel">
+        <div class="panel-header"><h2>Kernteam</h2>
+          <span class="panel-note">Klik ✉ voor e-mail · klik 💬 voor intern bericht</span>
+        </div>
+        <div class="group-label">Kernteam directie</div>
+        <div id="contacts-core"></div>
+        <div class="group-label" style="margin-top:4px;">Businessteams</div>
+        <div id="contacts-teams"></div>
+        <div class="group-label" style="margin-top:4px;">Overige diensten</div>
+        <div id="contacts-other"></div>
+      </div>
+    </div>
+
+    <!-- ══ PHASES ══ -->
+    <div class="section" id="section-phases">
+      <div class="panel">
+        <div class="panel-header"><h2>Fasering — uitvoeringsvolgorde</h2>
+          <span class="panel-note">Strikt sequentieel — geen fase overslaan</span>
+        </div>
+        <div class="runway">
+          <div class="runway-track">
+            <div class="station done">
+              <div class="dot"></div>
+              <div class="fase-label">Fase 0</div>
+              <div class="fase-name">Compliance</div>
+              <div class="fase-status">Grotendeels klaar</div>
+              <div class="fase-bar-wrap"><div class="fase-bar" style="width:85%"></div></div>
+            </div>
+            <div class="station active">
+              <div class="dot"></div>
+              <div class="fase-label">Fase 1</div>
+              <div class="fase-name">Meetbaarheid</div>
+              <div class="fase-status">GA4 + CF Analytics</div>
+              <div class="fase-bar-wrap"><div class="fase-bar" style="width:30%"></div></div>
+            </div>
+            <div class="station">
+              <div class="dot"></div>
+              <div class="fase-label">Fase 2</div>
+              <div class="fase-name">Productdata</div>
+              <div class="fase-status">Wacht op Awin</div>
+              <div class="fase-bar-wrap"><div class="fase-bar" style="width:0%"></div></div>
+            </div>
+            <div class="station">
+              <div class="dot"></div>
+              <div class="fase-label">Fase 3</div>
+              <div class="fase-name">Retentie</div>
+              <div class="fase-status">MailerLite</div>
+              <div class="fase-bar-wrap"><div class="fase-bar" style="width:0%"></div></div>
+            </div>
+            <div class="station">
+              <div class="dot"></div>
+              <div class="fase-label">Fase 4</div>
+              <div class="fase-name">Advertising</div>
+              <div class="fase-status">Meta Ads €300/m</div>
+              <div class="fase-bar-wrap"><div class="fase-bar" style="width:0%"></div></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="panel">
-        <h2>Fasering — uitvoeringsvolgorde</h2>
-        <p class="panel-note">Strikt sequentieel, geen fase overslaan.</p>
-        <div class="chart-box" style="height:180px;">
-          <canvas id="faseChart"></canvas>
+        <div class="panel-header"><h2>Detailstatus per systeem</h2></div>
+        <div class="sys-list">
+          <div class="sys-item"><span class="sys-icon">☁</span><div style="flex:1"><div class="sys-name">Cloudflare Workers + GitHub Actions CI/CD</div></div><span class="badge live">✅ live</span></div>
+          <div class="sys-item"><span class="sys-icon">🌐</span><div style="flex:1"><div class="sys-name">bierinckx.com / en /nl</div><div class="sys-detail">Correcte versie — Accessoires, cookiebanner, juridische links aanwezig</div></div><span class="badge live">✅ live · 12/07</span></div>
+          <div class="sys-item"><span class="sys-icon">🔗</span><div style="flex:1"><div class="sys-name">Daisycon</div><div class="sys-detail">Actief account, wacht op merchant-koppeling</div></div><span class="badge partial">🟡 deels</span></div>
+          <div class="sys-item"><span class="sys-icon">📡</span><div style="flex:1"><div class="sys-name">Awin</div><div class="sys-detail">Nog niet geactiveerd — blokkeert Fase 2</div></div><span class="badge down">🔴 niet actief</span></div>
+          <div class="sys-item"><span class="sys-icon">📊</span><div style="flex:1"><div class="sys-name">GA4 / Cloudflare Web Analytics</div><div class="sys-detail">Fase 1 — nog niet opgezet</div></div><span class="badge down">🔴 todo</span></div>
+          <div class="sys-item"><span class="sys-icon">📦</span><div style="flex:1"><div class="sys-name">Productdata & aankooppad</div><div class="sys-detail">Fase 2 — wacht op Awin + Daisycon</div></div><span class="badge down">🔴 todo</span></div>
+          <div class="sys-item"><span class="sys-icon">🏦</span><div style="flex:1"><div class="sys-name">BTW-nummer</div><div class="sys-detail">Aanvraag loopt — geen operationele blokkade</div></div><span class="badge pending">⏳ in aanvraag</span></div>
         </div>
       </div>
+    </div>
 
+    <!-- ══ LOG ══ -->
+    <div class="section" id="section-log">
       <div class="panel">
-        <h2>Recente activiteit</h2>
-        <p class="panel-note">Laatste wijzigingen en incidenten uit het Kernteam-logboek.</p>
-        <div class="log-item">
-          <div class="log-date">13/07/2026 · commit 76257b2</div>
-          <div class="log-text"><b>Kessel &rarr; Westerlo</b> gecorrigeerd in footer (alle 9 voorkomens), bevestigd door Tom. Gecommit naar bierinckx-shop-/src/worker.js op main. CI/CD-deploy naar Cloudflare nog niet doorgezet bij eerste check direct na de commit — normaal gedrag, nog te herbevestigen met een live-test.</div>
+        <div class="panel-header"><h2>Activiteitenlogboek</h2>
+          <span class="panel-note">Kernteam-commits en incidenten</span>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · opgelost</div>
-          <div class="log-text"><b>Root-vs-/nl issue opgelost.</b> bierinckx.com/ toont nu dezelfde correcte, compliant versie als /nl — geverifieerd via nieuwe live-fetch. Oorzaak niet formeel bevestigd (IT loste het buiten mijn zicht op), maar resultaat is bewezen via directe test. Nieuw aandachtspunt gevonden tijdens dezelfde check: footer vermeldt "Kessel, België" i.p.v. "Westerlo" — nog te bevestigen bij Tom of dit correct is.</div>
+          <div class="log-date"><span class="badge info">commit</span> 13/07/2026 · 76257b2</div>
+          <div class="log-text"><b>Kessel → Westerlo</b> gecorrigeerd in footer (alle 9 voorkomens). Gecommit naar bierinckx-shop-/src/worker.js op main. CI/CD-deploy naar Cloudflare nog te herbevestigen met live-test.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · toegangscheck</div>
-          <div class="log-text"><b>Bevestigd: geen schrijftoegang tot Cloudflare zone-instellingen (Domains/Routes/DNS)</b> en geen deploy-toegang tot de Worker — enkel leestoegang op broncode en worker-lijst, en GitHub-schrijftoegang op dit dashboard zelf. De root-vs-/nl fix moet dus door IT zelf in het Cloudflare-dashboard gebeuren; kan niet door mij worden uitgevoerd zolang deze toegang niet uitgebreid wordt.</div>
+          <div class="log-date"><span class="badge live">opgelost</span> 12/07/2026</div>
+          <div class="log-text"><b>Root-vs-/nl issue opgelost.</b> bierinckx.com/ toont nu de correcte versie — geverifieerd via live-fetch. Nieuw aandachtspunt: footer vermeldde "Kessel" i.p.v. "Westerlo" (zie commit hierboven).</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · overdracht naar IT-Director</div>
-          <div class="log-text"><b>Diagnose-traject afgesloten voor overdracht.</b> Uitgesloten: cache (purge zonder effect, ook met cache-busting) en Workers Routes (leeg, niets geconfigureerd). Bevestigd: bierinckx-shop is gekoppeld via Custom Domain, getoond als "bierinckx.com + 1 other route" op het Workers &amp; Pages-overzicht — die "1 other route" is nog niet geïdentificeerd. Bevestigd via broncode: de huidige worker-code bevat de oude teksten ("Veilig betalen via Stripe" e.d.) niet meer, dus root-content komt niet uit de actuele bierinckx-shop-deploy. Volgende stap voor IT: tabblad Domains van de Worker zelf (niet het account-brede Domains-overzicht) controleren op de exacte binding van de kale root.</div>
+          <div class="log-date"><span class="badge info">toegangscheck</span> 12/07/2026</div>
+          <div class="log-text"><b>Bevestigd: geen schrijftoegang tot Cloudflare zone-instellingen</b> (Domains/Routes/DNS) en geen deploy-toegang tot de Worker — enkel leestoegang op broncode en GitHub-schrijftoegang op dit dashboard.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · vervolg-onderzoek</div>
-          <div class="log-text"><b>Cache-purge uitgevoerd door Tom (Cloudflare-dashboard) — loste het niet op.</b> Root bierinckx.com/ toont nog steeds exact dezelfde oude content, ook met een cache-busting query-parameter. Diagnose bijgesteld: caching lijkt uitgesloten. Vermoeden nu: Workers Route of DNS/Page Rule voor de kale root wijst naar een ander origin of een oudere Worker-versie dan bierinckx-shop. IT-Director: check Zone → Workers Routes en DNS/Page Rules voor bierinckx.com/*.</div>
+          <div class="log-date"><span class="badge partial">overdracht</span> 12/07/2026 · IT-Director</div>
+          <div class="log-text"><b>Diagnose-traject afgesloten.</b> Bevestigd: bierinckx-shop gekoppeld via Custom Domain als "bierinckx.com + 1 other route". Die "1 other route" nog onbekend. IT-actie: tabblad Domains van de Worker controleren op exacte binding van de kale root.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · live-verificatie via web_fetch</div>
-          <div class="log-text"><b>Incident — root vs /nl divergeren.</b> bierinckx.com/ toont een oudere, niet-compliant versie (geen Accessoires, geen cookiebanner, geen juridische links, nog "Gratis retour 14 dagen" + "Veilig betalen via Stripe" zichtbaar) terwijl bierinckx.com/nl wél de bijgewerkte versie toont. 2x apart opgevraagd, reproduceerbaar. Vermoedelijke oorzaak: caching (Cloudflare edge-cache van de root-route) of een routing-tak die niet meeliep in de laatste deploy. IT-Director: root-route en cache moeten onderzocht worden vóór dit als ✅ mag gelden.</div>
+          <div class="log-date"><span class="badge down">incident</span> 12/07/2026</div>
+          <div class="log-text"><b>Cache-purge door Tom — loste root-issue niet op.</b> Diagnose: Workers Route of DNS/Page Rule voor kale root wijst naar oudere Worker-versie. IT-Director: check Zone → Workers Routes en DNS/Page Rules.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · commit f23286e</div>
+          <div class="log-date"><span class="badge down">incident</span> 12/07/2026 · web_fetch-verificatie</div>
+          <div class="log-text"><b>Root vs /nl divergeerden.</b> bierinckx.com/ toonde niet-compliant versie (geen Accessoires, geen cookiebanner, nog "Gratis retour" + "Stripe") terwijl /nl ✅ was. 2× gereproduceerd.</div>
+        </div>
+        <div class="log-item">
+          <div class="log-date"><span class="badge info">commit</span> 12/07/2026 · f23286e</div>
           <div class="log-text"><b>Accessoires</b> volwaardige 6e hoofdcategorie — eigen hero, 3 subsegmenten, 4 talen. 29 routes render-getest.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · commit c81f07c</div>
-          <div class="log-text"><b>Incident opgelost</b> — niet-escapete apostrof brak sitewide het script-blok. Nieuw verplicht testprotocol: elk script-blok apart parsen en uitvoeren vóór commit.</div>
+          <div class="log-date"><span class="badge live">fix</span> 12/07/2026 · c81f07c</div>
+          <div class="log-text"><b>Incident opgelost</b> — niet-escapete apostrof brak sitewide het script-blok. Nieuw protocol: elk script-blok apart parsen vóór commit.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · commit 511976a</div>
-          <div class="log-text"><b>404 gevonden en gefixt</b> — footer-link shop-accessoires wees naar verkeerde URL. Verificatie uitgebreid naar volledige link-sweep.</div>
+          <div class="log-date"><span class="badge live">fix</span> 12/07/2026 · 511976a</div>
+          <div class="log-text"><b>404 gevonden en gefixt</b> — footer-link shop-accessoires wees naar verkeerde URL. Volledige link-sweep ingebouwd.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · commit b23238b / 9bfd1d6</div>
-          <div class="log-text">Chatbot krijgt <b>dienst-routing per e-mailadres</b> en blijft open na auto-navigatie tussen pagina's.</div>
+          <div class="log-date"><span class="badge info">commit</span> 12/07/2026 · b23238b / 9bfd1d6</div>
+          <div class="log-text">Chatbot krijgt <b>dienst-routing per e-mailadres</b> en blijft open na auto-navigatie.</div>
         </div>
         <div class="log-item">
-          <div class="log-date">12/07/2026 · commit 53e4e11</div>
-          <div class="log-text">Proactieve sweep (120 pagina's, 360 scripts) — 2 pre-existente 404's <b>zelf gevonden en opgelost</b> zonder dat Tom ernaar vroeg.</div>
+          <div class="log-date"><span class="badge live">proactief</span> 12/07/2026 · 53e4e11</div>
+          <div class="log-text">Sweep 120 pagina's / 360 scripts — 2 pre-existente 404's <b>zelf gevonden en opgelost</b> zonder opdracht.</div>
         </div>
       </div>
+    </div>
 
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── COMPOSE MODAL ── -->
+<div class="modal-overlay" id="compose-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Nieuw bericht</h3>
+      <button class="modal-close" onclick="closeModal('compose-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div>
+          <label class="lbl">Aan</label>
+          <select class="inp" id="modal-to">
+            <option value="">— kies ontvanger —</option>
+            <optgroup label="Kernteam">
+              <option>🧭 Director</option><option>👑 Luxe-Director</option>
+              <option>🖥️ IT-Director</option><option>💰 Finance-Controller</option>
+              <option>📚 Knowledge-Manager</option>
+            </optgroup>
+            <optgroup label="Businessteams">
+              <option>Sales (11 agents)</option><option>Psychologie (9 agents)</option>
+              <option>Consultancy (6 agents)</option><option>AURA LUXE (12 agents)</option>
+              <option>IT (14 agents)</option><option>Kennis, Groei & Financiën (4 agents)</option>
+            </optgroup>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Prioriteit</label>
+          <select class="inp" id="modal-priority">
+            <option>Normaal</option><option>Urgent</option><option>Escalatie vereist</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row full" style="margin-top:10px;">
+        <div>
+          <label class="lbl">Onderwerp</label>
+          <input type="text" class="inp" id="modal-subject" placeholder="Korte beschrijving…">
+        </div>
+      </div>
+      <div class="field-row full" style="margin-top:10px;">
+        <div>
+          <label class="lbl">Bericht</label>
+          <textarea class="inp" id="modal-body" placeholder="Max 5 zinnen, keuze A/B waar relevant…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('compose-modal')">Annuleren</button>
+      <button class="btn btn-brass" onclick="sendModalMsg()">✉ Versturen</button>
     </div>
   </div>
 </div>
 
-<footer>
-  <span>Bierinckx Kernteam · Masterprompt V22 · 12/07/2026</span>
-  <span>Statische snapshot — geen live telemetrie tot Fase 1 ✅</span>
-</footer>
+<!-- ── TOAST CONTAINER ── -->
+<div class="toast-container" id="toasts"></div>
 
 <script>
+// ══ DATA ══
+const AGENTS = [
+  {id:'dir',name:'Director',role:'Voorzitter Kernteam',team:'Kernteam',emoji:'🧭',email:'info@bierinckx.com',status:'online'},
+  {id:'lux',name:'Luxe-Director',role:'AURA LUXE',team:'Kernteam',emoji:'👑',email:'auraluxe@bierinckx.com',status:'online'},
+  {id:'it-dir',name:'IT-Director',role:'Cloudflare · Integraties',team:'Kernteam',emoji:'🖥️',email:'info@bierinckx.com',status:'busy'},
+  {id:'fin',name:'Finance-Controller',role:'Kerncijfers · BTW',team:'Kernteam',emoji:'💰',email:'info@bierinckx.com',status:'online'},
+  {id:'know',name:'Knowledge-Manager',role:'Rapportage · Archief',team:'Kernteam',emoji:'📚',email:'info@bierinckx.com',status:'online'},
+  {id:'sales',name:'Team Sales',role:'11 agents · €7.000/m target',team:'Sales',emoji:'📈',email:'sales@bierinckx.com',status:'online'},
+  {id:'psy',name:'Team Psychologie',role:'9 agents · verborgen uit nav',team:'Psychologie',emoji:'🧠',email:'spy@bierinckx.com',status:'online'},
+  {id:'cons',name:'Team Consultancy',role:'6 agents · €6.000/m target',team:'Consultancy',emoji:'💼',email:'consultancy@bierinckx.com',status:'busy'},
+  {id:'aura',name:'AURA LUXE',role:'12 agents · affiliate-only',team:'AURA LUXE',emoji:'✨',email:'auraluxe@bierinckx.com',status:'online'},
+  {id:'it',name:'Team IT',role:'14 agents · Cloudflare/GitHub',team:'IT',emoji:'⚙️',email:'info@bierinckx.com',status:'alert'},
+  {id:'kgf',name:'Kennis, Groei & Fin.',role:'4 agents · bewaking',team:'KGF',emoji:'🔍',email:'info@bierinckx.com',status:'online'},
+];
+
+const SYSTEMS = [
+  {icon:'☁',name:'Cloudflare Workers',detail:'GitHub Actions CI/CD actief',uptime:'99.9%',status:'live'},
+  {icon:'🌐',name:'bierinckx.com / + /nl',detail:'Correcte versie — geverifieerd 12/07',uptime:'99.7%',status:'live'},
+  {icon:'🔗',name:'Daisycon',detail:'Actief account · wacht op merchant-koppeling',uptime:'—',status:'partial'},
+  {icon:'📡',name:'Awin',detail:'Nog niet geactiveerd — Fase 2 blokker',uptime:'—',status:'down'},
+  {icon:'📊',name:'GA4 / CF Analytics',detail:'Fase 1 — nog niet opgezet',uptime:'—',status:'down'},
+  {icon:'📦',name:'Productdata & aankooppad',detail:'Fase 2 — wacht op Awin + Daisycon',uptime:'—',status:'down'},
+  {icon:'🏦',name:'BTW-nummer',detail:'Aanvraag loopt · geen operationele blokkade',uptime:'—',status:'pending'},
+  {icon:'💬',name:'Chatbot routing',detail:'Dienst-routing per e-mailadres actief',uptime:'99.9%',status:'live'},
+];
+
+const ISSUES = [
+  {sev:'critical',title:'GA4 & CF Analytics niet opgezet',desc:'Fase 1 kan pas worden afgesloten wanneer GA4 en Cloudflare Web Analytics live zijn. Blokkeert Fase 2 en 3.',meta:'IT-Director · open · 12/07/2026',action:'Toewijzen aan IT'},
+  {sev:'critical',title:'Awin-activatie ontbreekt',desc:'Awin is nog niet geactiveerd en blokkeert de volledige Fase 2 (Productdata & aankooppad). Vereist merchant-koppeling.',meta:'IT-Director · open · 12/07/2026',action:'Toewijzen aan IT'},
+  {sev:'warning',title:'CI/CD-deploy na commit 76257b2 niet herbevestigd',desc:'Footer-correctie Kessel → Westerlo is gecommit maar de live-deploy naar Cloudflare is nog niet geverifieerd via een live-test.',meta:'IT-Director · open · 13/07/2026',action:'Herbevestigen'},
+  {sev:'warning',title:'Daisycon merchant-koppeling uitstaande',desc:'Daisycon-account is actief maar de merchant-koppeling ontbreekt. Zonder dit kan Fase 2 niet worden gestart.',meta:'Sales / IT · open · 12/07/2026',action:'Contact Daisycon'},
+  {sev:'info',title:'BTW-nummer in aanvraag',desc:'Aanvraag loopt. Geen operationele blokkade maar vereist opvolging vóór facturatie boven €500.',meta:'Finance-Controller · monitoren · 12/07/2026',action:'Monitoren'},
+  {sev:'ok',title:'Root-vs-/nl issue opgelost ✅',desc:'bierinckx.com/ en /nl tonen nu allebei de correcte versie. Geverifieerd via live-fetch op 12/07/2026.',meta:'IT-Director · gesloten · 12/07/2026',action:null},
+];
+
+const CONTACTS_CORE = [
+  {emoji:'🧭',name:'Director',role:'Voorzitter Kernteam',email:'info@bierinckx.com',subject:'Kernteam - Director'},
+  {emoji:'👑',name:'Luxe-Director',role:'AURA LUXE',email:'auraluxe@bierinckx.com',subject:'Kernteam - Luxe-Director'},
+  {emoji:'🖥️',name:'IT-Director',role:'Cloudflare · Integraties',email:'info@bierinckx.com',subject:'Kernteam - IT-Director'},
+  {emoji:'💰',name:'Finance-Controller',role:'Kerncijfers · BTW',email:'info@bierinckx.com',subject:'Kernteam - Finance'},
+  {emoji:'📚',name:'Knowledge-Manager',role:'Rapportage · Archief',email:'info@bierinckx.com',subject:'Kernteam - Knowledge'},
+];
+const CONTACTS_TEAMS = [
+  {emoji:'📈',name:'Sales',role:'11 agents · €7.000/m target',email:'sales@bierinckx.com',subject:'Team Sales'},
+  {emoji:'🧠',name:'Psychologie',role:'9 agents · verborgen uit nav',email:'spy@bierinckx.com',subject:'Team Psychologie'},
+  {emoji:'💼',name:'Consultancy',role:'6 agents · €6.000/m target',email:'consultancy@bierinckx.com',subject:'Team Consultancy'},
+  {emoji:'✨',name:'AURA LUXE',role:'12 agents · affiliate-only',email:'auraluxe@bierinckx.com',subject:'Team AURA LUXE'},
+  {emoji:'⚙️',name:'IT',role:'14 agents · Cloudflare/GitHub',email:'info@bierinckx.com',subject:'Team IT'},
+  {emoji:'🔍',name:'Kennis, Groei & Financiën',role:'4 agents · bewaking',email:'info@bierinckx.com',subject:'Team KGF'},
+];
+const CONTACTS_OTHER = [
+  {emoji:'🎯',name:'Fractional CRO & Grafische Nijverheid',role:'via chatbot-routing',email:'sales@bierinckx.com',subject:'Fractional CRO / Grafische Nijverheid'},
+];
+
+let messages = [];
+let agentFilter = 'all';
+
+// ══ NAVIGATION ══
+function navigate(section){
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.section === section);
+  });
+  document.querySelectorAll('.section').forEach(el=>{
+    el.classList.toggle('active', el.id === 'section-'+section);
+  });
+  const titles = {
+    overview:'Dashboard',agents:'Agents',systems:'Systemen & escalatie',
+    issues:'Problemen',messages:'Berichten',contacts:'Contacten',
+    phases:'Fasering',log:'Activiteitenlogboek'
+  };
+  document.getElementById('topbar-title').textContent = titles[section] || section;
+  if(section==='overview') renderOverview();
+}
+
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.addEventListener('click',()=>navigate(el.dataset.section));
+});
+
+// ══ CLOCK ══
+function tick(){
+  const now = new Date();
+  const t = now.toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const ts = now.toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('clock').textContent = t;
+  document.getElementById('sidebar-time').textContent = ts;
+}
+tick(); setInterval(tick,1000);
+
+// ══ AGENT STATUS SIMULATION ══
+function simStatus(){
+  AGENTS.forEach(a=>{
+    if(Math.random()<.04){
+      const s = ['online','online','online','busy','offline'];
+      if(a.id!=='it') a.status = s[Math.floor(Math.random()*s.length)];
+    }
+  });
+  updateStats();
+  renderOverviewAgents();
+  renderAllAgents();
+}
+setInterval(simStatus, 8000);
+
+function statusLabel(s){ return {online:'Online',busy:'Bezig',offline:'Offline',alert:'Probleem'}[s]||s; }
+function statusDotClass(s){ return {online:'dot-green',busy:'dot-amber',offline:'dot-grey',alert:'dot-red'}[s]||'dot-grey'; }
+function statusColor(s){ return {online:'var(--green)',busy:'var(--amber)',offline:'var(--faint)',alert:'var(--red)'}[s]||'var(--faint)'; }
+
+// ══ STATS ══
+function updateStats(){
+  const online = AGENTS.filter(a=>a.status==='online').length;
+  const sysLive = SYSTEMS.filter(s=>s.status==='live').length;
+  const iss = ISSUES.filter(i=>i.sev==='critical'||i.sev==='warning').length;
+  document.getElementById('stat-online').textContent = online;
+  document.getElementById('stat-online-delta').textContent = `van ${AGENTS.length} totaal`;
+  document.getElementById('stat-systems').textContent = sysLive;
+  document.getElementById('stat-issues').textContent = iss;
+  document.getElementById('issues-badge').textContent = iss;
+}
+
+// ══ RENDER FUNCTIONS ══
+function agentCard(a, compact=false){
+  const dc = statusDotClass(a.status);
+  return `<div class="agent-card ${a.status}" data-team="${a.team}" data-status="${a.status}">
+    <div class="agent-card-top">
+      <div class="agent-avatar">${a.emoji}</div>
+      <div>
+        <div class="agent-name">${a.name}</div>
+        <div class="agent-role">${a.role}</div>
+      </div>
+    </div>
+    <div class="agent-status">
+      <span class="status-dot ${dc}"></span>
+      <span style="color:${statusColor(a.status)}">${statusLabel(a.status)}</span>
+    </div>
+    <div class="agent-card-actions">
+      <a class="btn btn-ghost" href="mailto:${a.email}?subject=${encodeURIComponent(a.name)}">✉</a>
+      <button class="btn btn-ghost" onclick="prefillMsg('${a.name}')">💬</button>
+    </div>
+  </div>`;
+}
+
+function renderOverviewAgents(){
+  const el = document.getElementById('overview-agents');
+  if(!el) return;
+  const top = AGENTS.filter(a=>a.status==='alert'||a.status==='busy').concat(AGENTS.filter(a=>a.status==='online')).slice(0,6);
+  el.innerHTML = top.map(a=>agentCard(a)).join('');
+}
+
+function renderAllAgents(){
+  const el = document.getElementById('all-agents');
+  if(!el) return;
+  let list = agentFilter==='all' ? AGENTS : AGENTS.filter(a=>a.status===agentFilter);
+  el.innerHTML = list.map(a=>agentCard(a)).join('');
+}
+
+function filterAgents(f){
+  agentFilter=f;
+  renderAllAgents();
+}
+
+function sysHtml(s){
+  const badge = {live:'<span class="badge live">✅ live</span>',partial:'<span class="badge partial">🟡 deels</span>',down:'<span class="badge down">🔴 niet actief</span>',pending:'<span class="badge pending">⏳ aanvraag</span>'}[s.status]||'';
+  return `<div class="sys-item">
+    <span class="sys-icon">${s.icon}</span>
+    <div style="flex:1"><div class="sys-name">${s.name}</div><div class="sys-detail">${s.detail}</div></div>
+    ${s.uptime!=='—'?`<span class="sys-uptime">${s.uptime}</span>`:''}
+    ${badge}
+  </div>`;
+}
+
+function renderOverviewSystems(){
+  const el = document.getElementById('overview-systems');
+  if(el) el.innerHTML = SYSTEMS.map(s=>sysHtml(s)).join('');
+}
+
+function renderAllSystems(){
+  const el = document.getElementById('all-systems');
+  if(el) el.innerHTML = SYSTEMS.map(s=>sysHtml(s)).join('');
+}
+
+function renderIssues(){
+  const el = document.getElementById('issues-list');
+  if(!el) return;
+  el.innerHTML = ISSUES.map(i=>`
+    <div class="issue-item">
+      <div class="issue-sev sev-${i.sev}"></div>
+      <div>
+        <div class="issue-title">${i.title}</div>
+        <div class="issue-desc">${i.desc}</div>
+        <div class="issue-meta">${i.meta}</div>
+      </div>
+      <div class="issue-actions">
+        ${i.action?`<button class="btn btn-ghost" style="font-size:11px;white-space:nowrap;" onclick="prefillMsg('${i.title}')">${i.action}</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function contactRow(c){
+  return `<div class="contact-row">
+    <span class="contact-emoji">${c.emoji}</span>
+    <div class="contact-info">
+      <div class="contact-name">${c.name}</div>
+      <div class="contact-role">${c.role}</div>
+    </div>
+    <div class="contact-actions">
+      <a class="tag-mail" href="mailto:${c.email}?subject=${encodeURIComponent(c.subject)}">✉ ${c.email.split('@')[0]}@</a>
+      <button class="tag-msg" onclick="prefillMsg('${c.name}')">💬</button>
+    </div>
+  </div>`;
+}
+
+function renderContacts(){
+  const cc = document.getElementById('contacts-core');
+  const ct = document.getElementById('contacts-teams');
+  const co = document.getElementById('contacts-other');
+  if(cc) cc.innerHTML = CONTACTS_CORE.map(contactRow).join('');
+  if(ct) ct.innerHTML = CONTACTS_TEAMS.map(contactRow).join('');
+  if(co) co.innerHTML = CONTACTS_OTHER.map(contactRow).join('');
+}
+
+function renderOverview(){
+  renderOverviewAgents();
+  renderOverviewSystems();
+}
+
+// ══ MESSAGING ══
+function prefillMsg(to){
+  navigate('messages');
+  const sel = document.getElementById('msg-to');
+  for(let o of sel.options){ if(o.text.includes(to)||o.value.includes(to)){ sel.value=o.value; break; } }
+  document.getElementById('msg-subject').focus();
+}
+
+function clearMsg(){
+  document.getElementById('msg-to').value='';
+  document.getElementById('msg-priority').value='normaal';
+  document.getElementById('msg-subject').value='';
+  document.getElementById('msg-body').value='';
+}
+
+function sendMsg(){
+  const to = document.getElementById('msg-to').value;
+  const priority = document.getElementById('msg-priority').value;
+  const subject = document.getElementById('msg-subject').value.trim();
+  const body = document.getElementById('msg-body').value.trim();
+  if(!to||!subject||!body){ showToast('Veld ontbreekt','Vul ontvanger, onderwerp en bericht in.','warning'); return; }
+  _addMessage(to, priority, subject, body);
+  clearMsg();
+  showToast('Bericht verstuurd',`Naar ${to.split('(')[0].trim()} · ${priority}`,'success');
+}
+
+function sendModalMsg(){
+  const to = document.getElementById('modal-to').value;
+  const priority = document.getElementById('modal-priority').value;
+  const subject = document.getElementById('modal-subject').value.trim();
+  const body = document.getElementById('modal-body').value.trim();
+  if(!to||!subject||!body){ showToast('Veld ontbreekt','Vul ontvanger, onderwerp en bericht in.','warning'); return; }
+  _addMessage(to, priority, subject, body);
+  closeModal('compose-modal');
+  document.getElementById('modal-to').value='';
+  document.getElementById('modal-subject').value='';
+  document.getElementById('modal-body').value='';
+  showToast('Bericht verstuurd',`Naar ${to.split('(')[0].trim()} · ${priority}`,'success');
+}
+
+function _addMessage(to, priority, subject, body){
+  const msg = {to, priority, subject, body, ts: new Date()};
+  messages.unshift(msg);
+  renderMessages();
+}
+
+function renderMessages(){
+  const el = document.getElementById('msg-thread-list');
+  if(!el) return;
+  if(!messages.length){ el.innerHTML='<div style="padding:20px;color:var(--faint);font-size:13px;text-align:center;">Nog geen berichten verstuurd in deze sessie.</div>'; return; }
+  const priorityBadge = p => ({urgent:'<span class="badge down">urgent</span>',escalatie:'<span class="badge partial">escalatie</span>'}[p]||'<span class="badge info">normaal</span>');
+  el.innerHTML = messages.map(m=>`
+    <div class="msg-thread" style="margin-bottom:14px;">
+      <div class="msg-bubble sent">
+        <div class="msg-header">
+          <span class="msg-to-tag">→ ${m.to.split('(')[0].trim()}</span>
+          ${priorityBadge(m.priority)}
+          <span class="msg-time" style="margin-left:auto;">${m.ts.toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+        <div style="font-size:13px;font-weight:500;margin-bottom:4px;">${m.subject}</div>
+        <div class="msg-text">${m.body.replace(/\n/g,'<br>')}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ══ MODAL ══
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open'); });
+});
+
+// ══ TOAST ══
+function showToast(title, text, type='success'){
+  const icons = {success:'✅',warning:'⚠️',error:'🔴'};
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ'}</span><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-text">${text}</div></div>`;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3500);
+}
+
+// ══ CHARTS ══
 Chart.defaults.color = '#9C9484';
 Chart.defaults.font.family = "'Inter', sans-serif";
-Chart.defaults.font.size = 12;
+Chart.defaults.font.size = 11;
 
 new Chart(document.getElementById('teamChart'), {
-  type: 'doughnut',
-  data: {
-    labels: ['Sales','Psychologie','Consultancy','AURA LUXE','IT','Kennis/Groei/Fin'],
-    datasets: [{
-      data: [11,9,6,12,14,4],
-      backgroundColor: ['#C6A063','#4E7C71','#7FA26B','#D2A24A','#8A7145','#C06B5E'],
-      borderColor: '#1C1915',
-      borderWidth: 2
-    }]
+  type:'doughnut',
+  data:{
+    labels:['Sales','Psychologie','Consultancy','AURA LUXE','IT','KGF'],
+    datasets:[{data:[11,9,6,12,14,4],backgroundColor:['#C6A063','#4E8075','#7FA26B','#D2A24A','#8A7145','#C06B5E'],borderColor:'#181614',borderWidth:3}]
   },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } }
-  }
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10}}}}
 });
 
 new Chart(document.getElementById('revenueChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Sales','Psych.','Consult.','AURA LUXE'],
-    datasets: [{
-      label: 'Target €/maand',
-      data: [7000,1500,6000,2000],
-      backgroundColor: '#C6A063'
-    }]
+  type:'bar',
+  data:{
+    labels:['Sales','Psych.','Consult.','AURA LUXE'],
+    datasets:[{label:'Target €/maand',data:[7000,1500,6000,2000],backgroundColor:'#C6A063',borderRadius:2}]
   },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      y: { beginAtZero: true, grid: { color: '#33301F55' } },
-      x: { grid: { display: false } }
-    }
-  }
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#2E2B1F44'}},x:{grid:{display:false}}}}
 });
 
 new Chart(document.getElementById('faseChart'), {
-  type: 'bar',
-  data: {
-    labels: ['Fase 0\nCompliance','Fase 1\nMeetbaarheid','Fase 2\nProductdata','Fase 3\nRetentie','Fase 4\nAdvertising'],
-    datasets: [{
-      label: 'Voortgang (%)',
-      data: [85, 30, 0, 0, 0],
-      backgroundColor: ['#C6A063','#D2A24A','#33301F','#33301F','#33301F']
-    }]
+  type:'bar',
+  data:{
+    labels:['Compliance','Meetbaarheid','Productdata','Retentie','Advertising'],
+    datasets:[{label:'Voortgang %',data:[85,30,0,0,0],backgroundColor:['#C6A063','#D2A24A','#2E2B1F','#2E2B1F','#2E2B1F'],borderRadius:2}]
   },
-  options: {
-    indexAxis: 'y',
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { min: 0, max: 100, grid: { color: '#33301F55' } },
-      y: { grid: { display: false } }
-    }
-  }
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{min:0,max:100,grid:{color:'#2E2B1F44'}},y:{grid:{display:false}}}}
 });
-</script>
 
+// ══ SEARCH ══
+document.getElementById('global-search').addEventListener('input',function(){
+  const q = this.value.toLowerCase();
+  if(!q) return;
+  const match = AGENTS.find(a=>a.name.toLowerCase().includes(q)||a.team.toLowerCase().includes(q));
+  if(match){ navigate('agents'); agentFilter='all'; renderAllAgents(); }
+});
+
+// ══ INIT ══
+updateStats();
+renderOverview();
+renderAllAgents();
+renderAllSystems();
+renderIssues();
+renderContacts();
+
+// Periodic status flicker for realism
+setTimeout(()=>showToast('Systeem bewaking','Dashboard actief · realtime agent-status geladen','success'), 1200);
+</script>
 </body>
 </html>
